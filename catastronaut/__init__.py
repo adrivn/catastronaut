@@ -19,6 +19,7 @@ class CatastroRetriever:
     baseurl_data: (
         str
     ) = "http://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCallejero.svc/json/"
+    baseurl_codes: str = "http://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCallejeroCodigos.svc/json/"
     baseurl_xy: str = "http://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCoordenadas.svc/json/"
     mapping_data: dict = mapping_data
     mapping_xy: dict = mapping_xy
@@ -27,7 +28,6 @@ class CatastroRetriever:
     _result_multiple: list = []
     _temp_single: dict = {}
     _temp_multiple: list = []
-    _latest_op: str = ""
     _multiple: bool = False
 
     @classmethod
@@ -49,7 +49,6 @@ class CatastroRetriever:
         Devuelve:
         dict: diccionario/objeto JSON con 1) referencias catastrales usadas para la peticion, larga y corta 2) latitud 3) longitud 4) sistema de coordenadas y 5) direccion completa
         """
-        cls._latest_op = "GEO"
         cls._multiple = True
         all_params_strings = all(isinstance(x, str) for x in [rc, municipio, provincia])
         all_params_list = all(isinstance(x, list) for x in [rc, municipio, provincia])
@@ -110,7 +109,7 @@ class CatastroRetriever:
         Devuelve:
         dict: diccionario/objeto JSON con 1) número de provincias 2) nombres de provincias y 3) códigos de INE.
         """
-
+        cls._multiple = False
         try:
             datos = req.get(
                 "http://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCallejero.svc/json/ObtenerProvincias"
@@ -126,7 +125,6 @@ class CatastroRetriever:
             cls._result_single = {
                 key: val for key, val in mapped_response.items() if val is not None
             }  # en el evento de una peticion incorrecta (referencia catastral mal formada, etc.)
-            cls._latest_op = "PROV"
             return cls
 
         except req.RequestException as e:
@@ -143,6 +141,7 @@ class CatastroRetriever:
         Devuelve:
         dict: diccionario/objeto JSON con 1) número de municipios 2) nombres de municipios y 3) códigos de INE y DGC.
         """
+        cls._multiple = True
         all_params_strings = isinstance(provincia, str)
         all_params_list = all(
             isinstance(p, str) for p in provincia if isinstance(provincia, list)
@@ -188,9 +187,6 @@ class CatastroRetriever:
                 print(f"Request failed with {e}. Retrying...")
                 raise
 
-        cls._latest_op = "MUNIP"
-        cls._multiple = True
-
         return cls
 
     @classmethod
@@ -204,6 +200,8 @@ class CatastroRetriever:
         Devuelve:
         dict: diccionario/objeto JSON con 1) número de municipios 2) nombres de municipios y 3) códigos de INE y DGC.
         """
+        cls._multiple = True
+
         all_params_strings = all(isinstance(x, str) for x in [municipio, provincia])
         all_params_list = all(isinstance(x, list) for x in [municipio, provincia])
 
@@ -268,7 +266,6 @@ class CatastroRetriever:
         Devuelve:
         dict: diccionario/objeto JSON con 1) referencias catastrales usadas para la peticion, larga y corta 2) datos no protegidos
         """
-        cls._latest_op = "FINCA"
         cls._multiple = True
         all_params_strings = all(isinstance(x, str) for x in [rc, municipio, provincia])
         all_params_list = all(isinstance(x, list) for x in [rc, municipio, provincia])

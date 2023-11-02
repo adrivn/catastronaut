@@ -61,7 +61,7 @@ mapping_data = {
     "coeficiente_participacion": "consulta_dnprcResult.bico.bi.debi.cpt",
     "antiguedad": "consulta_dnprcResult.bico.bi.debi.ant",
     # Unidades constructivas
-    "unidades_constructivas": "consulta_dnprcResult.bico.lcons[*].{uso: lcd, superficie_catastral: dfcons.stl,bloque: dt.lourb.loint.bq, escalera: dt.lourb.loint.es, planta: dt.lourb.loint.pt, puerta: dt.lourb.loint.pu}",
+    "unidades_constructivas": "consulta_dnprcResult.bico.lcons[*].{uso: lcd, tipologia: dvcons.dtip, superficie_catastral: dfcons.stl,bloque: dt.lourb.loint.bq, escalera: dt.lourb.loint.es, planta: dt.lourb.loint.pt, puerta: dt.lourb.loint.pu}",
     # Subparcelas
     "subparcelas": "consulta_dnprcResult.bico.lspr[*].{codigo_subparcela: spr.cspr, superficie_catastral: spr.dspr.ssp, calificacion_catastral: spr.dspr.ccc, clase_cultivo: spr.dspr.dcc, intensidad_productiva: spr.dspr.ip}",
 }
